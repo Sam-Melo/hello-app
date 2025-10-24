@@ -37,6 +37,8 @@ hello-app/
 └── workflows/
 └── cicd.yml
 
+bash
+Copiar código
 
 ### Repositório `hello-manifests`
 Contém os manifests do Kubernetes:
@@ -47,6 +49,8 @@ hello-manifests/
 ├── service.yaml
 └── application.yaml
 
+yaml
+Copiar código
 
 ---
 
@@ -101,15 +105,21 @@ spec:
       selfHeal: true
 Aplicado com o comando:
 
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/Sam-Melo/hello-manifests/main/k8s/application.yaml
+Aplicado com o comando:
+```bash
 kubectl apply -n argocd -f https://raw.githubusercontent.com/Sam-Melo/hello-manifests/main/k8s/application.yaml
 8. TESTE DA APLICAÇÃO
 Verifique os recursos criados:
 
-
+bash
+Copiar código
 kubectl get deploy,po,svc -l app=hello-app -n default
 Faça o port-forward para acesso local:
 
-
+bash
+Copiar código
 kubectl port-forward svc/hello-app 8080:80
 Acesse:
 http://localhost:8080
@@ -122,9 +132,9 @@ Copiar código
 9. RESULTADOS
 ✅ Pipeline automatizado com GitHub Actions e Docker Hub
 ✅ Deploy contínuo via ArgoCD
-
-
 ✅ Sincronização automática entre repositórios
 ✅ Ambientes versionados e reproduzíveis
 
+📸 Evidência de Build e Push da Imagem no Docker Hub
 
+Figura 2 – Imagem publicada no Docker Hub
