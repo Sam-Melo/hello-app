@@ -28,3 +28,112 @@ A imagem da aplicação é gerada e publicada automaticamente no **Docker Hub**,
 
 ### Repositório `hello-app`
 Contém o código-fonte da aplicação e o pipeline CI/CD.
+
+hello-app/
+├── main.py
+├── requirements.txt
+├── Dockerfile
+└── .github/
+└── workflows/
+└── cicd.yml
+
+bash
+Copiar código
+
+### Repositório `hello-manifests`
+Contém os manifests do Kubernetes:
+
+hello-manifests/
+└── k8s/
+├── deployment.yaml
+├── service.yaml
+└── application.yaml
+
+yaml
+Copiar código
+
+---
+
+## 5. FUNCIONAMENTO DO PIPELINE
+
+1. O desenvolvedor faz um **push no branch main** do repositório `hello-app`.  
+2. O **GitHub Actions** inicia automaticamente o workflow (`cicd.yml`).  
+3. O job realiza o **build da imagem Docker** e faz o **push para o Docker Hub**.  
+4. O pipeline acessa o repositório `hello-manifests` via **SSH (Deploy Key)** e atualiza o `deployment.yaml` com a nova tag da imagem.  
+5. O **ArgoCD**, configurado para monitorar o repositório `hello-manifests`, detecta a alteração e executa o **deploy automático** no cluster Kubernetes.  
+6. O novo pod é criado com a imagem atualizada, completando o ciclo **CI/CD**.
+
+---
+
+## 6. CONFIGURAÇÕES DE AMBIENTE
+
+### 6.1 Repositório `hello-app`
+Secrets configurados em *Settings → Secrets and variables → Actions*:
+- `DOCKER_USERNAME` → usuário do Docker Hub  
+- `DOCKER_PASSWORD` → token do Docker Hub  
+- `SSH_PRIVATE_KEY` → chave privada gerada localmente (sem senha)
+
+### 6.2 Repositório `hello-manifests`
+- Chave pública adicionada em *Settings → Deploy Keys*  
+  - Título: `gh-actions`
+  - **Allow write access** habilitado
+
+---
+
+## 7. ARGOCD – REGISTRO DA APLICAÇÃO
+
+Manifesto `application.yaml`:
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "https://github.com/Sam-Melo/hello-manifests"
+    targetRevision: main
+    path: k8s
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+Aplicado com o comando:
+
+bash
+Copiar código
+kubectl apply -n argocd -f https://raw.githubusercontent.com/Sam-Melo/hello-manifests/main/k8s/application.yaml
+8. TESTE DA APLICAÇÃO
+Verifique os recursos criados:
+
+bash
+Copiar código
+kubectl get deploy,po,svc -l app=hello-app -n default
+Faça o port-forward para acesso local:
+
+bash
+Copiar código
+kubectl port-forward svc/hello-app 8080:80
+Acesse:
+http://localhost:8080
+
+Saída esperada:
+
+json
+Copiar código
+{"message": "Hello from CI/CD!"}
+9. RESULTADOS
+✅ Pipeline automatizado com GitHub Actions e Docker Hub
+✅ Deploy contínuo via ArgoCD
+✅ Sincronização automática entre repositórios
+✅ Ambientes versionados e reproduzíveis
+
+10. CONCLUSÃO
+O projeto cumpre o objetivo de demonstrar um pipeline CI/CD completo, com integração entre ferramentas modernas de DevOps.
+A automação do processo de build, publicação e deploy reduz falhas humanas, agiliza o ciclo de entrega e mantém a aplicação constantemente atualizada no ambiente Kubernetes.
+
