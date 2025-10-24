@@ -122,6 +122,9 @@ Copiar código
 9. RESULTADOS
 ✅ Pipeline automatizado com GitHub Actions e Docker Hub
 ✅ Deploy contínuo via ArgoCD
+### 📸 Evidências
+## 📸 Evidência de Build e Push da Imagem no Docker Hub
+
 ✅ Sincronização automática entre repositórios
 ✅ Ambientes versionados e reproduzíveis
 
