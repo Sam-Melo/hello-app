@@ -2,7 +2,8 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 env:
   IMAGE_NAME: sammel0/hello-app
@@ -17,7 +18,7 @@ jobs:
 
       - name: Set image tag
         id: vars
-        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run: echo "TAG=$(echo ${GITHUB_SHA::7})" >> $GITHUB_OUTPUT
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -26,25 +27,37 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
-          context: .
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
-            ${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.TAG }}
 
-      - name: Update manifests repository
+      # 🔐 nova forma de autenticação SSH e atualização do outro repositório
+      - name: Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add GitHub to known_hosts
+        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Checkout manifests repo (SSH)
+        uses: actions/checkout@v4
+        with:
+          repository: Sam-Melo/hello-manifests   # ⚠️ confirme o nome do dono/repo
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          path: hello-manifests
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Update image tag and push
+        working-directory: hello-manifests
         env:
           TAG: ${{ steps.vars.outputs.TAG }}
           IMAGE: ${{ env.IMAGE_NAME }}
         run: |
-          eval $(ssh-agent -s)
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git clone git@github.com:sammel0/hello-manifests.git
-          cd hello-manifests
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           sed -i "s#image: .*#image: ${IMAGE}:${TAG}#g" k8s/deployment.yaml
-          git commit -am "chore: update image to ${IMAGE}:${TAG}"
+          git commit -am "chore: update image to ${IMAGE}:${TAG}" || echo "no changes"
           git push origin main
