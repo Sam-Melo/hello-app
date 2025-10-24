@@ -134,32 +134,35 @@ Saída esperada:
 > Coloque os prints na pasta `docs/` do repositório **hello-app** e mantenha os nomes abaixo.  
 > (Para trocar o caminho, basta ajustar o link da imagem.)
 
-**Figura 1 – Verificação de virtualização/WSL2 habilitados (Windows)**
-![Figura 1](docs/01-wsl-hyperv-ok.png)
 
-**Figura 2 – Rancher Desktop instalado e Kubernetes habilitado**
-![Figura 2](docs/02-rancher-desktop-k8s-on.png)
+### 📦 1. Link do repositório com os manifests (`deployment.yaml`, `service.yaml`)  
+[https://github.com/Sam-Melo/hello-manifests](https://github.com/Sam-Melo/hello-manifests)
 
-**Figura 3 – `kubectl get nodes` com nó `Ready` (K3s)**
-![Figura 3](docs/03-kubectl-get-nodes.png)
+---
 
-**Figura 4 – ArgoCD instalado (`argocd` namespace pronto / pods `Running`)**
-![Figura 4](docs/04-argocd-pods-running.png)
+### 🧱 2. Evidência de build e push da imagem no Docker Hub  
+<img width="1856" height="975" alt="image" src="https://github.com/user-attachments/assets/7f5bc2f6-08ca-45ab-b66e-15ae970a0817" />
 
-**Figura 5 – Secrets do GitHub configurados (DOCKER_USERNAME, DOCKER_PASSWORD, SSH_PRIVATE_KEY)**
-![Figura 5](docs/05-github-secrets.png)
 
-**Figura 6 – Deploy Key com write access no repositório `hello-manifests`**
-![Figura 6](docs/06-deploy-key-hello-manifests.png)
+---
 
-**Figura 7 – Execução “Build and push Docker image” no GitHub Actions (sucesso)**
-![Figura 7](docs/07-actions-build-push.png)
+### 🔁 3. Evidência de atualização automática dos manifests com a nova tag da imagem  
+<img width="1858" height="951" alt="image" src="https://github.com/user-attachments/assets/4c8d4f08-11ff-479c-a1a7-eb1111db3483" />
 
-**Figura 8 – Imagem publicada no Docker Hub com tag do commit**
-![Figura 8](docs/08-dockerhub-tags.png)
 
-**Figura 9 – Commit automático no `hello-manifests` atualizando `deployment.yaml`**
-![Figura 9](docs/09-commit-manifests-update.png)
+---
 
-**Figura 10 – ArgoCD Application `hello-app` em estado Synced/Healthy**
-![Figura 10](docs/10-argocd-synced-healthy.png)
+### 🧭 4. Captura de tela do ArgoCD com a aplicação sincronizada  
+<img width="1919" height="1026" alt="image" src="https://github.com/user-attachments/assets/b3537866-41fe-4d1d-9f39-008785986068" />
+
+
+---
+
+### 🧩 5. Print do `kubectl get pods` com a aplicação rodando  
+<img width="1115" height="624" alt="image" src="https://github.com/user-attachments/assets/e66b13b1-5d83-4739-b2d3-a0cc316ad7d4" />
+
+
+---
+
+### 🌐 6. Print da resposta da aplicação via navegador  
+<img width="623" height="70" alt="image" src="https://github.com/user-attachments/assets/c990848a-51c0-44f9-9499-27cd88f88463" />
