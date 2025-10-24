@@ -37,8 +37,6 @@ hello-app/
 └── workflows/
 └── cicd.yml
 
-bash
-Copiar código
 
 ### Repositório `hello-manifests`
 Contém os manifests do Kubernetes:
@@ -49,8 +47,6 @@ hello-manifests/
 ├── service.yaml
 └── application.yaml
 
-yaml
-Copiar código
 
 ---
 
@@ -105,19 +101,15 @@ spec:
       selfHeal: true
 Aplicado com o comando:
 
-bash
-Copiar código
 kubectl apply -n argocd -f https://raw.githubusercontent.com/Sam-Melo/hello-manifests/main/k8s/application.yaml
 8. TESTE DA APLICAÇÃO
 Verifique os recursos criados:
 
-bash
-Copiar código
+
 kubectl get deploy,po,svc -l app=hello-app -n default
 Faça o port-forward para acesso local:
 
-bash
-Copiar código
+
 kubectl port-forward svc/hello-app 8080:80
 Acesse:
 http://localhost:8080
@@ -133,7 +125,4 @@ Copiar código
 ✅ Sincronização automática entre repositórios
 ✅ Ambientes versionados e reproduzíveis
 
-10. CONCLUSÃO
-O projeto cumpre o objetivo de demonstrar um pipeline CI/CD completo, com integração entre ferramentas modernas de DevOps.
-A automação do processo de build, publicação e deploy reduz falhas humanas, agiliza o ciclo de entrega e mantém a aplicação constantemente atualizada no ambiente Kubernetes.
 
